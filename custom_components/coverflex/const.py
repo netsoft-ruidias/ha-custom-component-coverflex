@@ -2,6 +2,8 @@ DOMAIN = "coverflex"
 PLATFORM = "sensor"
 DOMAIN_DATA = f"{DOMAIN}_data"
 
+ATTRIBUTION = "Data provided by https://www.coverflex.com/"
+
 DEFAULT_ICON = "mdi:credit-card"
 UNIT_OF_MEASUREMENT = "€"
 
