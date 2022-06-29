@@ -47,7 +47,7 @@ async def async_setup_entry(hass: HomeAssistant,
 
 
 class CoverflexSensor(SensorEntity):
-    """Representation of a MyEdenred Card (Sensor)."""
+    """Representation of a Coverflex Card (Sensor)."""
 
     def __init__(self, card: Card, api: CoverflexAPI, config: Any):
         super().__init__()
@@ -67,7 +67,7 @@ class CoverflexSensor(SensorEntity):
     @property
     def name(self) -> str:
         """Return the name of the entity."""
-        return f"Edenred Card {self._card.holder_name}"
+        return f"Coverflex Card {self._card.holder_name}"
 
     @property
     def unique_id(self) -> str:

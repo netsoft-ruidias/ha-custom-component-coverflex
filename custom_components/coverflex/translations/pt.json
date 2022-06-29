@@ -1,0 +1,28 @@
+{
+    "title": "Coverflex Refeição",
+    "config": {
+        "step": {
+            "user": {
+                "title": "Credenciais de Acesso",
+                "description": "Por favor, introduza o seu nome de utilizador e palavra passe que usa para ter acesso ao portal https://my.coverflex.com/.",
+                "data": {
+                    "username": "Email",
+                    "password": "Palavra Passe",
+                    "includeTransactions": "Incluir a lista de transações?"
+                },
+                "data_description": {
+                    "username": "O Email usado para aceder ao portal https://my.coverflex.com/",
+                    "password": "O Palavra Passe usada para aceder ao portal https://my.coverflex.com/",
+                    "includeTransactions": "Incluir a lista de transações"
+                }
+            }
+        },
+        "error": {
+            "auth": "Credenciais inválidas para https://my.coverflex.com/."
+        },
+        "abort": {
+            "single_instance_allowed": "Só é permitida uma unica integração do Coverflex.",
+            "already_configured": "Esta integração já existe"
+        }
+    }
+}

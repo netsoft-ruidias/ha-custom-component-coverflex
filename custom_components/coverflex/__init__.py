@@ -1,4 +1,4 @@
-"""The my_edenred integration."""
+"""The Coverflex integration."""
 from __future__ import annotations
 import logging
 
