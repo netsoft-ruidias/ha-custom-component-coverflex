@@ -28,16 +28,21 @@ Assuming you have already installed and configured HACS, follow these steps:
 8. The integration is now visible. Click 'Install', and click 'Install' again.
 9. Ready! Now continue with the configuration.
 
-## Manual
-Manual installation is not recomended
-
-# Configuration
-
-## Through the interface
+## Configuration Through the interface
 1. Navigate to `Settings > Devices & Services` and then click `Add Integration`
 2. Search for `coverflex`
 4. Enter your credentials
 5. Repeat the procedure as many times as desired to include other cards you may have
+
+# Presentation
+
+To present your data (card balance) just use a simple entity card
+
+```yaml
+type: entities
+entities:
+  - sensor.edenred_card_xxx_yyy
+```
 
 # Legal notice
 This is a personal project and isn't in any way affiliated with, sponsored or endorsed by [Coverflex Benefits](https://www.coverflex.com/).
