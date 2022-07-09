@@ -8,12 +8,12 @@
                 "data": {
                     "username": "Email",
                     "password": "Password",
-                    "includeTransactions": "Include the transaction list?"
+                    "transactions": "How many records to fetch in transactions list?"
                 },
                 "data_description": {
                     "username": "The email used to login in https://my.coverflex.com/ portal",
                     "password": "The password used to login in https://my.coverflex.com/ portal",
-                    "includeTransactions": "Include the transaction list"
+                    "transactions": "How many records to fetch in transactions list? (zero means none)"
                 }
             }
         },

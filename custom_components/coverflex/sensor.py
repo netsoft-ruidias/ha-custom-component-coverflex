@@ -15,6 +15,10 @@ from homeassistant.components.sensor import (
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.const import (
+    CONF_USERNAME,
+    CONF_PASSWORD
+)
 
 from .api import CoverflexAPI
 from .interfaces import Card
@@ -22,7 +26,8 @@ from .const import (
     DOMAIN,
     DEFAULT_ICON,
     UNIT_OF_MEASUREMENT,
-    ATTRIBUTION
+    ATTRIBUTION,
+    CONF_TRANSACTIONS
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -39,7 +44,7 @@ async def async_setup_entry(hass: HomeAssistant,
     api = CoverflexAPI(session)
 
     config = config_entry.data
-    token = await api.login(config["username"], config["password"])
+    token = await api.login(config[CONF_USERNAME], config[CONF_PASSWORD])
 
     if (token):
         card = await api.getCard(token)
@@ -126,12 +131,17 @@ class CoverflexSensor(SensorEntity):
         api = self._api
         config = self._config
         
-        try:            
-            token = await api.login(config["username"], config["password"])
+        try:
+            token = await api.login(config[CONF_USERNAME], config[CONF_PASSWORD])
             if (token):
                 pocket = await api.getBalance(token)
                 self._state = pocket.balance
                 self._currency = pocket.currency
+
+                qtd = int(config[CONF_TRANSACTIONS])
+                if (qtd > 0):
+                    self._transactions = await api.getMovements(token, pocket.id, qtd)
+
 
         except aiohttp.ClientError as err:
             self._available = False

@@ -7,20 +7,22 @@ import async_timeout
 
 from homeassistant import config_entries
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.const import (
+    CONF_USERNAME,
+    CONF_PASSWORD
+)
 
 from .api import CoverflexAPI
-from .const import DOMAIN
+from .const import DOMAIN, CONF_TRANSACTIONS
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
 
-DATA_SCHEMA = vol.Schema(
-    { 
-        vol.Required("username"): str, 
-        vol.Required("password"): str,
-        # vol.Required("includeTransactions"): bool,
-    }
-)
+DATA_SCHEMA = vol.Schema({ 
+    vol.Required(CONF_USERNAME): str, 
+    vol.Required(CONF_PASSWORD): str,
+    vol.Required(CONF_TRANSACTIONS, default=0): vol.Coerce(int),
+})
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -34,13 +36,13 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         if user_input is not None:
-            await self.async_set_unique_id(user_input["username"].lower())
+            await self.async_set_unique_id(user_input[CONF_USERNAME].lower())
             self._abort_if_unique_id_configured()
 
             if await self._test_credentials(user_input):
                 _LOGGER.debug("Config is valid!")
                 return self.async_create_entry(
-                    title="Coverflex " + user_input["username"], 
+                    title=f"Coverflex {user_input[CONF_USERNAME]}",
                     data = user_input
                 ) 
             else:
@@ -58,7 +60,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         async with async_timeout.timeout(10):
             api = CoverflexAPI(session)
             try:
-                await api.login(user_input["username"], user_input["password"])
+                await api.login(user_input[CONF_USERNAME], user_input[CONF_PASSWORD])
                 return True
             except Exception as exception:
                 _LOGGER.error(exception)

@@ -1,5 +1,8 @@
 """Card Class."""
 
+from datetime import datetime, timezone
+from homeassistant.util import dt
+
 class Card:
     """Represents a Coverflex card."""
 
@@ -11,28 +14,29 @@ class Card:
         return self._data["id"]
 
     @property
-    def activated_at(self):
-        return self._data["activated_at"]
+    def activated_at(self) -> datetime:
+        return dt.parse_datetime(self._data["activated_at"]).astimezone(timezone.utc)
 
     @property
-    def expiration_date(self):
-        return self._data["expiration_date"]
+    def expiration_date(self) -> datetime:
+        return dt.parse_datetime(self._data["expiration_date"]).astimezone(timezone.utc)
 
     @property
-    def holder_company_name(self):
+    def holder_company_name(self) -> str:
         return self._data["holder_company_name"]
 
     @property
-    def holder_name(self):
+    def holder_name(self) -> str:
         return self._data["holder_name"]
 
     @property
-    def pan_last_digits(self):
+    def pan_last_digits(self) -> str:
         return self._data["pan_last_digits"]
 
     @property
     def status(self):
         return self._data["status"]
+
 
 class Pocket:
     """Represents a Coverflex Pocket."""
@@ -46,8 +50,35 @@ class Pocket:
 
     @property
     def balance(self) -> float:
-        return float(self._data["balance"]["amount"])
+        return float(self._data["balance"]["amount"]) / 100
 
     @property
-    def currency(self):
+    def currency(self) -> str:
         return self._data["balance"]["currency"]
+
+
+class Transaction:
+    """Represents a Coverflex Transaction."""
+
+    def __init__(self, data):
+        self._data = data
+        
+    @property
+    def date(self) -> datetime:
+        return dt.parse_datetime(self._data["executed_at"]).astimezone(timezone.utc)
+
+    @property
+    def description(self) -> str:
+        return self._data["description"]
+
+
+    @property
+    def amount(self) -> float:
+        if (self._data["is_debit"]):
+            return 0 - float(self._data["amount"]["amount"]) / 100
+        else:
+            return float(self._data["amount"]["amount"]) / 100
+
+    @property
+    def currency(self) -> str:
+        return self._data["amount"]["currency"]

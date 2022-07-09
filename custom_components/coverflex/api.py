@@ -1,12 +1,14 @@
 """API to COVERFLEX."""
+from typing import List
 import aiohttp
 import logging
 
-from .interfaces import Card, Pocket
+from .interfaces import Card, Pocket, Transaction
 from .const import (
     API_LOGIN_URL,
     API_CARD_URL,
-    API_POCKETS_URL
+    API_POCKETS_URL,
+    API_MOVEMENTS_URL
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -69,3 +71,25 @@ class CoverflexAPI:
                 raise Exception("Could not fetch the card balance from API")
         except aiohttp.ClientError as err:
             _LOGGER.error(err)
+
+    async def getMovements(self, token, pocketId, movementCount: int) -> List[Transaction]:
+        """Issue CARD requests."""
+        try:
+            _LOGGER.debug("Getting the card movements...")
+            async with self.websession.get(
+                API_MOVEMENTS_URL, 
+                params = {
+                    "pocket_id": pocketId,
+                    "per_page": movementCount },
+                headers = { 
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {token}" }
+            ) as res:
+                if res.status == 200 and res.content_type == "application/json":
+                    json = await res.json()
+                    return [
+                        Transaction(data) for data in json['movements']['list']
+                    ]
+                raise Exception("Could not fetch the card movements from API")
+        except aiohttp.ClientError as err:
+            _LOGGER.error(err)            

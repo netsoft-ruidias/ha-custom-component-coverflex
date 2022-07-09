@@ -25,9 +25,11 @@ async def main():
             print ("  Balance..............:", pocket.balance)
             print ("  Currency.............:", pocket.currency)
 
-            # printTransaction = input("Print transaction list? (y/N) ")
-            # if (printTransaction == "Y" or printTransaction == "y"):                    
-            #     [print ("  -", t.date, t.name, t.amount) 
-            #         for t in account.movementList]
+            getTransactions = input("Get transaction list? (y/N) ")
+            if (getTransactions == "Y" or getTransactions == "y"):                    
+                 transactions = await api.getMovements(token, pocket.id, 10)
+                 if (transactions):                 
+                    [print ("  -", t.date, t.description, t.amount, t.currency)
+                        for t in transactions]
 
 asyncio.get_event_loop().run_until_complete(main())

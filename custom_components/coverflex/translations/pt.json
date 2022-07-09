@@ -8,12 +8,12 @@
                 "data": {
                     "username": "Email",
                     "password": "Palavra Passe",
-                    "includeTransactions": "Incluir a lista de transações?"
+                    "transactions": "Quantos registos de transações incluir?"
                 },
                 "data_description": {
                     "username": "O Email usado para aceder ao portal https://my.coverflex.com/",
                     "password": "O Palavra Passe usada para aceder ao portal https://my.coverflex.com/",
-                    "includeTransactions": "Incluir a lista de transações"
+                    "transactions": "Quantos registos de transações incluir? (zero significa nenhum)"
                 }
             }
         },
