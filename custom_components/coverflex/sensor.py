@@ -140,7 +140,16 @@ class CoverflexSensor(SensorEntity):
 
                 qtd = int(config[CONF_TRANSACTIONS])
                 if (qtd > 0):
-                    self._transactions = await api.getMovements(token, pocket.id, qtd)
+                    movements = await api.getMovements(token, pocket.id, qtd)
+                    list = []
+                    [list.append({
+                        "date": t.date,
+                        "description": t.description,
+                        "amount": t.amount,
+                        "currency": t.currency
+                    }) for t in movements]
+                    self._transactions = list
+
 
 
         except aiohttp.ClientError as err:

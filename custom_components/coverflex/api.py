@@ -72,10 +72,10 @@ class CoverflexAPI:
         except aiohttp.ClientError as err:
             _LOGGER.error(err)
 
-    async def getMovements(self, token, pocketId, movementCount: int) -> List[Transaction]:
+    async def getMovements(self, token, pocketId, movementCount: int):
         """Issue CARD requests."""
         try:
-            _LOGGER.debug("Getting the card movements...")
+            _LOGGER.debug("Getting the card movements...", pocketId, movementCount)
             async with self.websession.get(
                 API_MOVEMENTS_URL, 
                 params = {
@@ -87,6 +87,7 @@ class CoverflexAPI:
             ) as res:
                 if res.status == 200 and res.content_type == "application/json":
                     json = await res.json()
+                    _LOGGER.debug("fetched...", json)
                     return [
                         Transaction(data) for data in json['movements']['list']
                     ]
