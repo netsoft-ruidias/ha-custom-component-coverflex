@@ -5,7 +5,7 @@
 ![GitHub Release Date](https://img.shields.io/github/release-date/netsoft-ruidias/ha-custom-component-coverflex?style=for-the-badge)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/netsoft-ruidias/ha-custom-component-coverflex?style=for-the-badge)
 
-# Coverflex Banefits Integration
+# Coverflex Benefits Integration
 Coverflex Benefits - Custom Component for Home Assistant
 
 The data source for this integration is the [Coverflex Benefits](https://www.coverflex.com/).
