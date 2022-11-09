@@ -21,7 +21,7 @@ from homeassistant.const import (
 )
 
 from .api import CoverflexAPI
-from .interfaces import Card
+from .interfaces import Card, Pocket
 from .const import (
     DOMAIN,
     DEFAULT_ICON,
@@ -48,16 +48,21 @@ async def async_setup_entry(hass: HomeAssistant,
 
     if (token):
         card = await api.getCard(token)
-        sensors = [CoverflexSensor(card, api, config)]
+        pockets = await api.getBalances(token)
+        sensors = []
+        for pocket in pockets:
+            sensors.append(CoverflexSensor(card, pocket, api, config))
+        
         async_add_entities(sensors, update_before_add=True)
 
 
 class CoverflexSensor(SensorEntity):
     """Representation of a Coverflex Card (Sensor)."""
 
-    def __init__(self, card: Card, api: CoverflexAPI, config: Any):
+    def __init__(self, card: Card, pocket: Pocket, api: CoverflexAPI, config: Any):
         super().__init__()
         self._card = card
+        self._pocket = pocket
         self._api = api
         self._config = config
         self._transactions = None
@@ -73,12 +78,12 @@ class CoverflexSensor(SensorEntity):
     @property
     def name(self) -> str:
         """Return the name of the entity."""
-        return f"Coverflex Card {self._card.holder_name}"
+        return f"Coverflex Card {self._card.holder_name} [{self._pocket.type}]"
 
     @property
     def unique_id(self) -> str:
         """Return the unique ID of the sensor."""
-        return f"{DOMAIN}-{self._card.id}".lower()
+        return f"{DOMAIN}-{self._card.id}-{self._pocket.id}".lower()
 
     @property
     def available(self) -> bool:
@@ -134,7 +139,9 @@ class CoverflexSensor(SensorEntity):
         try:
             token = await api.login(config[CONF_USERNAME], config[CONF_PASSWORD])
             if (token):
-                pocket = await api.getBalance(token)
+                pockets = await api.getBalances(token)
+                pocket = next(p for p in pockets if p.id == self._pocket.id)
+
                 self._state = pocket.balance
                 self._currency = pocket.currency
 

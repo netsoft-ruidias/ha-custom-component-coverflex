@@ -55,7 +55,7 @@ class CoverflexAPI:
         except aiohttp.ClientError as err:
             _LOGGER.error(err)
 
-    async def getBalance(self, token) -> Pocket:
+    async def getBalances(self, token):
         """Issue CARD requests."""
         try:
             _LOGGER.debug("Getting the card details...")
@@ -67,7 +67,8 @@ class CoverflexAPI:
             ) as res:
                 if res.status == 200 and res.content_type == "application/json":
                     json = await res.json()
-                    return Pocket(json['pockets'][0])
+                    pockets = map(lambda x: Pocket(x), json['pockets'])
+                    return  list(pockets)
                 raise Exception("Could not fetch the card balance from API")
         except aiohttp.ClientError as err:
             _LOGGER.error(err)
