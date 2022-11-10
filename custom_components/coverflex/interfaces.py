@@ -1,6 +1,7 @@
 """Card Class."""
 
 from datetime import datetime, timezone
+from homeassistant.util import dt
 
 class Card:
     """Represents a Coverflex card."""
