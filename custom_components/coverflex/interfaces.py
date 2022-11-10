@@ -1,7 +1,6 @@
 """Card Class."""
 
 from datetime import datetime, timezone
-from homeassistant.util import dt
 
 class Card:
     """Represents a Coverflex card."""
@@ -55,6 +54,10 @@ class Pocket:
     @property
     def currency(self) -> str:
         return self._data["balance"]["currency"]
+
+    @property
+    def type(self):
+        return self._data["type"]
 
 
 class Transaction:
