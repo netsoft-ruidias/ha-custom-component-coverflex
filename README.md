@@ -37,7 +37,7 @@ To present your data (card balance) just use a any entity card
 ```yaml
 type: entities
 entities:
-  - sensor.coverflex_card_firstName_lastName
+  - sensor.coverflex_card_firstName_lastName_pocketType
 ```
 
 ## Transactions
@@ -48,7 +48,7 @@ We recommend using [custom:list-card](https://github.com/iantrich/list-card) whi
 
 ```yaml
 type: custom:list-card
-entity: sensor.coverflex_card_firstName_lastName
+entity: sensor.coverflex_card_firstName_lastName_pocketType
 feed_attribute: transactions
 title: My Coverflex Transactions
 row_limit: 10
