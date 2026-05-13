@@ -1,0 +1,50 @@
+{
+    "title": "Integración de Coverflex Benefits",
+    "config": {
+        "step": {
+            "user": {
+                "title": "Añadir credenciales",
+                "description": "Introduce las credenciales de tu cuenta Coverflex.",
+                "data": {
+                    "username": "Correo electrónico",
+                    "password": "Contraseña"
+                },
+                "data_description": {
+                    "username": "El correo electrónico usado para iniciar sesión en https://my.coverflex.com/",
+                    "password": "Tu contraseña de la cuenta Coverflex"
+                }
+            },
+            "otp": {
+                "title": "Verificación en dos pasos",
+                "description": "Se ha enviado un código de verificación por {otp_channel} al número que termina en ****{phone_last_digits}. Introduce el código de 6 dígitos a continuación.",
+                "data": {
+                    "otp": "Código de verificación"
+                }
+            },
+            "reauth_confirm": {
+                "title": "Reautenticar Coverflex",
+                "description": "Tu sesión de Coverflex ha expirado. Por favor, vuelve a introducir la contraseña de {username}.",
+                "data": {
+                    "password": "Contraseña"
+                }
+            },
+            "reauth_otp": {
+                "title": "Reautenticación — Verificación en dos pasos",
+                "description": "Se ha enviado un código de verificación por {otp_channel} al número que termina en ****{phone_last_digits}. Introduce el código de 6 dígitos a continuación.",
+                "data": {
+                    "otp": "Código de verificación"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Credenciales no válidas. Comprueba tu correo electrónico y contraseña.",
+            "invalid_otp": "Código de verificación no válido o expirado. Inténtalo de nuevo.",
+            "cannot_connect": "No es posible conectarse a la API de Coverflex. Inténtalo más tarde."
+        },
+        "abort": {
+            "single_instance_allowed": "Solo se permite una única configuración de Coverflex.",
+            "already_configured": "Coverflex ya está configurado.",
+            "reauth_successful": "La reautenticación se ha completado correctamente."
+        }
+    }
+}

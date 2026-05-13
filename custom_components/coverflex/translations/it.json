@@ -1,0 +1,50 @@
+{
+    "title": "Integrazione Coverflex Benefits",
+    "config": {
+        "step": {
+            "user": {
+                "title": "Aggiungi credenziali",
+                "description": "Inserisci le credenziali del tuo account Coverflex.",
+                "data": {
+                    "username": "E-mail",
+                    "password": "Password"
+                },
+                "data_description": {
+                    "username": "L'e-mail usata per accedere a https://my.coverflex.com/",
+                    "password": "La password del tuo account Coverflex"
+                }
+            },
+            "otp": {
+                "title": "Verifica in due passaggi",
+                "description": "È stato inviato un codice di verifica tramite {otp_channel} al numero che termina con ****{phone_last_digits}. Inserisci il codice a 6 cifre qui sotto.",
+                "data": {
+                    "otp": "Codice di verifica"
+                }
+            },
+            "reauth_confirm": {
+                "title": "Riautenticazione Coverflex",
+                "description": "La tua sessione Coverflex è scaduta. Inserisci nuovamente la password per {username}.",
+                "data": {
+                    "password": "Password"
+                }
+            },
+            "reauth_otp": {
+                "title": "Riautenticazione — Verifica in due passaggi",
+                "description": "È stato inviato un codice di verifica tramite {otp_channel} al numero che termina con ****{phone_last_digits}. Inserisci il codice a 6 cifre qui sotto.",
+                "data": {
+                    "otp": "Codice di verifica"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Credenziali non valide. Controlla l'e-mail e la password.",
+            "invalid_otp": "Codice di verifica non valido o scaduto. Riprova.",
+            "cannot_connect": "Impossibile connettersi all'API Coverflex. Riprova più tardi."
+        },
+        "abort": {
+            "single_instance_allowed": "È consentita una sola configurazione Coverflex.",
+            "already_configured": "Coverflex è già configurato.",
+            "reauth_successful": "La riautenticazione è avvenuta con successo."
+        }
+    }
+}

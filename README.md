@@ -91,6 +91,17 @@ Each transaction includes these fields:
 
 By default, the integration keeps up to 20 transactions per pocket.
 
+# Supported Languages
+
+The integration UI is available in the following languages:
+
+| Language  | Code |
+| --------- | ---- |
+| English   | `en` |
+| Português | `pt` |
+| Español   | `es` |
+| Italiano  | `it` |
+
 # Legal notice
 
 This is a personal project and isn't in any way affiliated with, sponsored or endorsed by [Coverflex Benefits](https://www.coverflex.com/).
