@@ -93,6 +93,16 @@ class CoverflexPocketSensor(CoordinatorEntity[CoverflexCoordinator], SensorEntit
         """Return extra attributes."""
         card = self.coordinator.data.card
         pocket = self._pocket
+        raw_transactions = self.coordinator.data.transactions.get(self._pocket_id, [])
+        transactions = [
+            {
+                "date": t.date,
+                "description": t.description,
+                "amount": t.amount,
+                "currency": t.currency,
+            }
+            for t in raw_transactions
+        ]
         return {
             "pocket_id": self._pocket_id,
             "pocket_type": self._pocket_type,
@@ -101,4 +111,5 @@ class CoverflexPocketSensor(CoordinatorEntity[CoverflexCoordinator], SensorEntit
             "card_status": card.status if card else None,
             "card_last_digits": card.pan_last_digits if card else None,
             "card_expiration": card.expiration_date if card else None,
+            "transactions": transactions,
         }

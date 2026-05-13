@@ -12,12 +12,13 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from .api import CoverflexAPI
 from .exceptions import CoverflexAPIError
-from .interfaces import Card, Pocket
+from .interfaces import Card, Pocket, Transaction
 from .const import (
     DOMAIN,
     UPDATE_INTERVAL,
     CONF_USER_AGENT_TOKEN,
     CONF_REFRESH_TOKEN,
+    DEFAULT_TRANSACTIONS_COUNT,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -29,6 +30,7 @@ class CoverflexData:
 
     card: Card
     pockets: list[Pocket]
+    transactions: dict[str, list[Transaction]]  # keyed by pocket_id
 
 
 class CoverflexCoordinator(DataUpdateCoordinator[CoverflexData]):
@@ -59,6 +61,10 @@ class CoverflexCoordinator(DataUpdateCoordinator[CoverflexData]):
         self._entry = entry
         self._api = api
         self._access_token: str | None = None
+        # Cache: pocket_id → last known balance (to detect changes)
+        self._last_balances: dict[str, float] = {}
+        # Cache: pocket_id → last fetched transactions list
+        self._cached_transactions: dict[str, list[Transaction]] = {}
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -138,7 +144,29 @@ class CoverflexCoordinator(DataUpdateCoordinator[CoverflexData]):
             if card is None or pockets is None:
                 raise UpdateFailed("Coverflex API returned incomplete data.")
 
-            return CoverflexData(card=card, pockets=pockets)
+            # Fetch transactions only for pockets whose balance changed (or first run)
+            for pocket in pockets:
+                previous = self._last_balances.get(pocket.id)
+                if previous is None or previous != pocket.balance:
+                    _LOGGER.debug(
+                        "Balance changed for pocket %s (%.2f → %.2f), fetching transactions.",
+                        pocket.type,
+                        previous if previous is not None else 0.0,
+                        pocket.balance,
+                    )
+                    movements = await self._api.get_movements(
+                        self._access_token, pocket.id, DEFAULT_TRANSACTIONS_COUNT
+                    )
+                    self._cached_transactions[pocket.id] = movements or []
+                    self._last_balances[pocket.id] = pocket.balance
+                else:
+                    _LOGGER.debug(
+                        "Balance unchanged for pocket %s (%.2f), reusing cached transactions.",
+                        pocket.type,
+                        pocket.balance,
+                    )
+
+            return CoverflexData(card=card, pockets=pockets, transactions=self._cached_transactions)
 
         except ConfigEntryAuthFailed:
             # Let HA handle the reauth flow — do not wrap in UpdateFailed

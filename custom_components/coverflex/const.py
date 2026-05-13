@@ -25,3 +25,6 @@ CONF_USER_AGENT_TOKEN = "user_agent_token"
 CONF_REFRESH_TOKEN = "refresh_token"
 
 UPDATE_INTERVAL = timedelta(minutes=30)
+
+# Maximum number of transactions to fetch and expose per pocket
+DEFAULT_TRANSACTIONS_COUNT = 20
