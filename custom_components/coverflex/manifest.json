@@ -1,14 +1,14 @@
 {
-    "version": "2.0.0",
     "domain": "coverflex",
     "name": "Coverflex Benefits Integration",
-    "documentation": "https://github.com/netsoft-ruidias/ha-custom-component-coverflex/blob/main/README.md",
-    "issue_tracker": "https://github.com/netsoft-ruidias/ha-custom-component-coverflex/issues",
-    "iot_class": "cloud_polling",
-    "requirements": [],
-    "dependencies": ["http"],
     "codeowners": [
         "@netsoft-ruidias"
     ],
-    "config_flow": true
+    "config_flow": true,
+    "dependencies": ["http"],
+    "documentation": "https://github.com/netsoft-ruidias/ha-custom-component-coverflex/blob/main/README.md",
+    "iot_class": "cloud_polling",
+    "issue_tracker": "https://github.com/netsoft-ruidias/ha-custom-component-coverflex/issues",
+    "requirements": [],
+    "version": "2.0.1"
 }
