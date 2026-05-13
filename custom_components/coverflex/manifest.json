@@ -6,7 +6,7 @@
     "issue_tracker": "https://github.com/netsoft-ruidias/ha-custom-component-coverflex/issues",
     "iot_class": "cloud_polling",
     "requirements": [],
-    "dependencies": [],
+    "dependencies": ["http"],
     "codeowners": [
         "@netsoft-ruidias"
     ],
