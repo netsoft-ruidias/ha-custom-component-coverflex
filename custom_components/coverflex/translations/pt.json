@@ -1,28 +1,50 @@
 {
-    "title": "Coverflex Refeição",
+    "title": "Coverflex",
     "config": {
         "step": {
             "user": {
                 "title": "Credenciais de Acesso",
-                "description": "Por favor, introduza o seu nome de utilizador e palavra passe que usa para ter acesso ao portal https://my.coverflex.com/.",
+                "description": "Introduza as credenciais da sua conta Coverflex.",
                 "data": {
                     "username": "Email",
-                    "password": "Palavra Passe",
-                    "transactions": "Quantos registos de transações incluir?"
+                    "password": "Palavra-passe"
                 },
                 "data_description": {
-                    "username": "O Email usado para aceder ao portal https://my.coverflex.com/",
-                    "password": "O Palavra Passe usada para aceder ao portal https://my.coverflex.com/",
-                    "transactions": "Quantos registos de transações incluir? (zero significa nenhum)"
+                    "username": "O email usado para aceder a https://my.coverflex.com/",
+                    "password": "A sua palavra-passe Coverflex"
+                }
+            },
+            "otp": {
+                "title": "Verificação em Dois Passos",
+                "description": "Foi enviado um código de verificação via {otp_channel} para o número a terminar em ****{phone_last_digits}. Introduza o código de 6 dígitos abaixo.",
+                "data": {
+                    "otp": "Código de verificação"
+                }
+            },
+            "reauth_confirm": {
+                "title": "Reautenticar Coverflex",
+                "description": "A sua sessão Coverflex expirou. Por favor, introduza novamente a palavra-passe de {username}.",
+                "data": {
+                    "password": "Palavra-passe"
+                }
+            },
+            "reauth_otp": {
+                "title": "Reautenticação — Verificação em Dois Passos",
+                "description": "Foi enviado um código de verificação via {otp_channel} para o número a terminar em ****{phone_last_digits}. Introduza o código de 6 dígitos abaixo.",
+                "data": {
+                    "otp": "Código de verificação"
                 }
             }
         },
         "error": {
-            "auth": "Credenciais inválidas para https://my.coverflex.com/."
+            "invalid_auth": "Credenciais inválidas. Verifique o email e a palavra-passe.",
+            "invalid_otp": "Código de verificação inválido ou expirado. Tente novamente.",
+            "cannot_connect": "Não foi possível ligar à API Coverflex. Tente mais tarde."
         },
         "abort": {
-            "single_instance_allowed": "Só é permitida uma unica integração do Coverflex.",
-            "already_configured": "Esta integração já existe"
+            "single_instance_allowed": "Só é permitida uma única integração Coverflex.",
+            "already_configured": "A integração Coverflex já está configurada.",
+            "reauth_successful": "A reautenticação foi concluída com sucesso."
         }
     }
 }

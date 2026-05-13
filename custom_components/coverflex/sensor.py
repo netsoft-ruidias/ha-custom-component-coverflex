@@ -1,164 +1,104 @@
-"""Platform for sensor integration."""
+"""Sensor platform for the Coverflex integration."""
 from __future__ import annotations
-from typing import Any
-import aiohttp
-import logging
 
-from datetime import timedelta
-from typing import Any, Callable, Dict
+import logging
+from typing import Any
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
     SensorStateClass,
 )
-from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.const import (
-    CONF_USERNAME,
-    CONF_PASSWORD
-)
+from homeassistant.const import CONF_USERNAME
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .api import CoverflexAPI
-from .interfaces import Card, Pocket
-from .const import (
-    DOMAIN,
-    DEFAULT_ICON,
-    UNIT_OF_MEASUREMENT,
-    ATTRIBUTION,
-    CONF_TRANSACTIONS
-)
+from .const import DOMAIN, ATTRIBUTION, DEFAULT_ICON
+from .coordinator import CoverflexCoordinator
+from .interfaces import Pocket
 
 _LOGGER = logging.getLogger(__name__)
-_LOGGER.setLevel(logging.DEBUG)
-
-# Time between updating data from API
-SCAN_INTERVAL = timedelta(minutes=60)
-
-async def async_setup_entry(hass: HomeAssistant, 
-                            config_entry: ConfigEntry, 
-                            async_add_entities: Callable):
-    """Setup sensor platform."""
-    session = async_get_clientsession(hass, True)
-    api = CoverflexAPI(session)
-
-    config = config_entry.data
-    token = await api.login(config[CONF_USERNAME], config[CONF_PASSWORD])
-
-    if (token):
-        card = await api.getCard(token)
-        pockets = await api.getBalances(token)
-        sensors = []
-        for pocket in pockets:
-            sensors.append(CoverflexSensor(card, pocket, api, config))
-        
-        async_add_entities(sensors, update_before_add=True)
 
 
-class CoverflexSensor(SensorEntity):
-    """Representation of a Coverflex Card (Sensor)."""
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up Coverflex sensors from a config entry."""
+    coordinator: CoverflexCoordinator = hass.data[DOMAIN][entry.entry_id]
 
-    def __init__(self, card: Card, pocket: Pocket, api: CoverflexAPI, config: Any):
-        super().__init__()
-        self._card = card
-        self._pocket = pocket
-        self._api = api
-        self._config = config
-        self._transactions = None
-        self._currency = None
+    async_add_entities(
+        CoverflexPocketSensor(coordinator, entry, pocket)
+        for pocket in coordinator.data.pockets
+    )
 
-        self._icon = DEFAULT_ICON
-        self._unit_of_measurement = UNIT_OF_MEASUREMENT
-        self._device_class = SensorDeviceClass.MONETARY
-        self._state_class = SensorStateClass.TOTAL
-        self._state = None
-        self._available = True
-        
-    @property
-    def name(self) -> str:
-        """Return the name of the entity."""
-        return f"Coverflex Card {self._card.holder_name} [{self._pocket.type}]"
+
+class CoverflexPocketSensor(CoordinatorEntity[CoverflexCoordinator], SensorEntity):
+    """Sensor representing a single Coverflex pocket balance."""
+
+    _attr_device_class = SensorDeviceClass.MONETARY
+    _attr_state_class = SensorStateClass.TOTAL
+    _attr_attribution = ATTRIBUTION
+    _attr_icon = DEFAULT_ICON
+    _attr_has_entity_name = True
+
+    def __init__(
+        self,
+        coordinator: CoverflexCoordinator,
+        entry: ConfigEntry,
+        pocket: Pocket,
+    ) -> None:
+        super().__init__(coordinator)
+        self._pocket_id = pocket.id
+        self._pocket_type = pocket.type
+        self._attr_unique_id = f"{entry.unique_id}_{pocket.type}"
+        self._attr_name = pocket.type.replace("_", " ").title()
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, entry.unique_id)},
+            name=f"Coverflex ({entry.data[CONF_USERNAME]})",
+            manufacturer="Coverflex",
+            entry_type=DeviceEntryType.SERVICE,
+        )
+
+    # ------------------------------------------------------------------
+    # State / attributes derived from coordinator data
+    # ------------------------------------------------------------------
 
     @property
-    def unique_id(self) -> str:
-        """Return the unique ID of the sensor."""
-        return f"{DOMAIN}-{self._card.id}-{self._pocket.id}".lower()
+    def _pocket(self) -> Pocket | None:
+        """Return the current pocket data from the coordinator."""
+        for p in self.coordinator.data.pockets:
+            if p.id == self._pocket_id:
+                return p
+        return None
 
     @property
-    def available(self) -> bool:
-        """Return True if entity is available."""
-        return self._available
+    def native_value(self) -> float | None:
+        """Return the current balance."""
+        pocket = self._pocket
+        return pocket.balance if pocket else None
 
     @property
-    def state(self) -> float:
-        return self._state
+    def native_unit_of_measurement(self) -> str | None:
+        """Return the currency from the API response."""
+        pocket = self._pocket
+        return pocket.currency if pocket else None
 
     @property
-    def device_class(self):
-        return self._device_class
-
-    @property
-    def state_class(self):
-        return self._state_class
-
-    @property
-    def unit_of_measurement(self):
-        """Return the unit the value is expressed in."""
-        return self._unit_of_measurement
-
-    @property
-    def icon(self):
-        return self._icon
-
-    @property
-    def attribution(self):
-        return ATTRIBUTION
-
-    @property
-    def extra_state_attributes(self) -> Dict[str, Any]:
-        """Return the state attributes."""
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return extra attributes."""
+        card = self.coordinator.data.card
+        pocket = self._pocket
         return {
-            "activated_at": self._card.activated_at,
-            "expiration_date": self._card.expiration_date,
-            "holder_company_name": self._card.holder_company_name,
-            "holder_name": self._card.holder_name,
-            "pan_last_digits": self._card.pan_last_digits,
-            "status": self._card.status,
-            "currency": self._currency,
-            "transactions": self._transactions
+            "pocket_id": self._pocket_id,
+            "pocket_type": self._pocket_type,
+            "card_holder": card.holder_name if card else None,
+            "card_company": card.holder_company_name if card else None,
+            "card_status": card.status if card else None,
+            "card_last_digits": card.pan_last_digits if card else None,
+            "card_expiration": card.expiration_date if card else None,
         }
-
-    async def async_update(self) -> None:
-        """Fetch new state data for the sensor.
-           This is the only method that should fetch new data for Home Assistant.
-        """
-        api = self._api
-        config = self._config
-        
-        try:
-            token = await api.login(config[CONF_USERNAME], config[CONF_PASSWORD])
-            if (token):
-                pockets = await api.getBalances(token)
-                pocket = next(p for p in pockets if p.id == self._pocket.id)
-
-                self._state = pocket.balance
-                self._currency = pocket.currency
-
-                qtd = int(config[CONF_TRANSACTIONS])
-                if (qtd > 0):
-                    movements = await api.getMovements(token, pocket.id, qtd)
-                    list = []
-                    [list.append({
-                        "date": t.date,
-                        "description": t.description,
-                        "amount": t.amount,
-                        "currency": t.currency
-                    }) for t in movements]
-                    self._transactions = list
-
-
-
-        except aiohttp.ClientError as err:
-            self._available = False
-            _LOGGER.exception("Error updating data from Coverflex API. %s", err)

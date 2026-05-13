@@ -15,11 +15,13 @@ class Card:
 
     @property
     def activated_at(self) -> datetime:
-        return dt.parse_datetime(self._data["activated_at"]).astimezone(timezone.utc)
+        raw = self._data.get("activated_at")
+        return dt.parse_datetime(raw).astimezone(timezone.utc) if raw else None
 
     @property
     def expiration_date(self) -> datetime:
-        return dt.parse_datetime(self._data["expiration_date"]).astimezone(timezone.utc)
+        raw = self._data.get("expiration_date")
+        return dt.parse_datetime(raw).astimezone(timezone.utc) if raw else None
 
     @property
     def holder_company_name(self) -> str:
@@ -36,6 +38,9 @@ class Card:
     @property
     def status(self):
         return self._data["status"]
+
+    def __repr__(self):
+        return f"Card({self._data.get('holder_name')} [{self._data.get('status')}] pan=****{self._data.get('pan_last_digits')})"
 
 
 class Pocket:

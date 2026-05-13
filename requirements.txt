@@ -1,0 +1,5 @@
+aiohttp
+python-dotenv
+async-timeout
+homeassistant
+voluptuous

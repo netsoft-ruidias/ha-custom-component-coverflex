@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Home Assistant
+home-assistant.log
+/config
+# Coverflex device trust token (local, sensitive)
+.coverflex_device_token
+.coverflex_refresh_token

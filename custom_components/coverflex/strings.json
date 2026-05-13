@@ -4,25 +4,47 @@
         "step": {
             "user": {
                 "title": "Add Credentials",
-                "description": "Please type your credentials",
+                "description": "Enter your Coverflex account credentials.",
                 "data": {
                     "username": "Email",
-                    "password": "Password",
-                    "transactions": "How many records to fetch in transactions list?"
+                    "password": "Password"
                 },
                 "data_description": {
-                    "username": "The email used to login in https://my.coverflex.com/ portal",
-                    "password": "The password used to login in https://my.coverflex.com/ portal",
-                    "transactions": "How many records to fetch in transactions list? (zero means none)"
+                    "username": "The email used to login at https://my.coverflex.com/",
+                    "password": "Your Coverflex account password"
+                }
+            },
+            "otp": {
+                "title": "Two-Factor Verification",
+                "description": "A verification code was sent via {otp_channel} to the number ending in ****{phone_last_digits}. Enter the 6-digit code below.",
+                "data": {
+                    "otp": "Verification code"
+                }
+            },
+            "reauth_confirm": {
+                "title": "Re-authenticate Coverflex",
+                "description": "Your Coverflex session has expired. Please re-enter the password for {username}.",
+                "data": {
+                    "password": "Password"
+                }
+            },
+            "reauth_otp": {
+                "title": "Re-authenticate — Two-Factor Verification",
+                "description": "A verification code was sent via {otp_channel} to the number ending in ****{phone_last_digits}. Enter the 6-digit code below.",
+                "data": {
+                    "otp": "Verification code"
                 }
             }
         },
         "error": {
-            "auth": "Invalid credentials accessing https://my.coverflex.com/ portal."
+            "invalid_auth": "Invalid credentials. Please check your email and password.",
+            "invalid_otp": "Invalid or expired verification code. Please try again.",
+            "cannot_connect": "Cannot connect to the Coverflex API. Please try again later."
         },
         "abort": {
-            "single_instance_allowed": "Only a single configuration of Coverflex is allowed.",
-            "already_configured": "Integration is already configured"
+            "single_instance_allowed": "Only a single Coverflex configuration is allowed.",
+            "already_configured": "Coverflex is already configured.",
+            "reauth_successful": "Re-authentication was successful."
         }
     }
 }
