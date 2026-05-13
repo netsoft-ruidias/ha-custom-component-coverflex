@@ -10,7 +10,7 @@
                     "password": "Password"
                 },
                 "data_description": {
-                    "username": "L'e-mail usata per accedere a https://my.coverflex.com/",
+                    "username": "L'e-mail usata per accedere al portale myCoverflex",
                     "password": "La password del tuo account Coverflex"
                 }
             },
