@@ -1,10 +1,12 @@
 """The Coverflex integration."""
 from __future__ import annotations
 import logging
+from pathlib import Path
 
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.components.http import StaticPathConfig
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import CoverflexAPI
@@ -19,6 +21,14 @@ PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Coverflex from a config entry."""
+    await hass.http.async_register_static_paths([
+        StaticPathConfig(
+            "/coverflex-brand",
+            str(Path(__file__).parent / "brand"),
+            cache_headers=True,
+        )
+    ])
+
     api = CoverflexAPI(async_get_clientsession(hass))
     coordinator = CoverflexCoordinator(hass, entry, api)
 

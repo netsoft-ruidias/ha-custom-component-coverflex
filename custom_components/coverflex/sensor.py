@@ -44,6 +44,7 @@ class CoverflexPocketSensor(CoordinatorEntity[CoverflexCoordinator], SensorEntit
     _attr_state_class = SensorStateClass.TOTAL
     _attr_attribution = ATTRIBUTION
     _attr_icon = DEFAULT_ICON
+    _attr_entity_picture = "/coverflex-brand/icon.png"
     _attr_has_entity_name = True
 
     def __init__(
