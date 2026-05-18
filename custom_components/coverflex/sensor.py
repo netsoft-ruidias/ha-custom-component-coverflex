@@ -4,6 +4,8 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from babel.dates import format_date as babel_format_date
+
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -15,12 +17,26 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.util.dt import as_local
 
 from .const import DOMAIN, ATTRIBUTION, DEFAULT_ICON
 from .coordinator import CoverflexCoordinator
 from .interfaces import Pocket
 
 _LOGGER = logging.getLogger(__name__)
+
+_MONTH_ABBR_EN = ("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+
+def _format_transaction_date(dt_obj, lang: str) -> str:
+    """Return a locale-aware date string in 'dd Mmm - HH:MM' format."""
+    local_dt = as_local(dt_obj)
+    try:
+        month = babel_format_date(local_dt, format="MMM", locale=lang).capitalize()
+    except Exception:  # noqa: BLE001
+        month = _MONTH_ABBR_EN[local_dt.month - 1]
+    return f"{local_dt.day:02d} {month} - {local_dt.strftime('%H:%M')}"
 
 
 async def async_setup_entry(
@@ -95,11 +111,12 @@ class CoverflexPocketSensor(CoordinatorEntity[CoverflexCoordinator], SensorEntit
         card = self.coordinator.data.card
         pocket = self._pocket
         raw_transactions = self.coordinator.data.transactions.get(self._pocket_id, [])
+        lang = self.hass.config.language
         transactions = [
             {
-                "date": t.date,
+                "date": _format_transaction_date(t.date, lang),
                 "description": t.description,
-                "amount": t.amount,
+                "amount": f"{t.amount:.2f}",
                 "currency": t.currency,
             }
             for t in raw_transactions

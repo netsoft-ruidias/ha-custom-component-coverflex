@@ -187,3 +187,8 @@ class CoverflexCoordinator(DataUpdateCoordinator[CoverflexData]):
     ) -> None:
         """Called by the reauth flow after a successful OTP login to persist new tokens."""
         await self._async_save_tokens(refresh_token, user_agent_token)
+
+    async def async_force_refresh(self) -> None:
+        """Force a full refresh, clearing the balance cache so all transactions are re-fetched."""
+        self._last_balances.clear()
+        await self.async_refresh()

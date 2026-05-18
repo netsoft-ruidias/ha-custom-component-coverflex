@@ -28,3 +28,6 @@ UPDATE_INTERVAL = timedelta(minutes=30)
 
 # Maximum number of transactions to fetch and expose per pocket
 DEFAULT_TRANSACTIONS_COUNT = 20
+
+# Service names
+SERVICE_REFRESH = "refresh"

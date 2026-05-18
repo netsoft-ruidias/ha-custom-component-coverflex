@@ -46,5 +46,17 @@
             "already_configured": "A integração Coverflex já está configurada.",
             "reauth_successful": "A reautenticação foi concluída com sucesso."
         }
+    },
+    "services": {
+        "refresh": {
+            "name": "Actualizar",
+            "description": "Força uma actualização completa dos saldos e movimentos, ignorando o intervalo de actualização e obtendo todos os movimentos independentemente de alterações de saldo.",
+            "fields": {
+                "config_entry_id": {
+                    "name": "Integração",
+                    "description": "A conta Coverflex a actualizar. Deixar em branco para actualizar todas as contas configuradas."
+                }
+            }
+        }
     }
 }
