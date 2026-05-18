@@ -46,5 +46,17 @@
             "already_configured": "Coverflex is already configured.",
             "reauth_successful": "Re-authentication was successful."
         }
+    },
+    "services": {
+        "refresh": {
+            "name": "Refresh",
+            "description": "Forces a full refresh of balances and transactions, bypassing the update interval and re-fetching all transactions regardless of balance changes.",
+            "fields": {
+                "config_entry_id": {
+                    "name": "Config entry",
+                    "description": "The Coverflex account to refresh. Leave empty to refresh all configured accounts."
+                }
+            }
+        }
     }
 }
